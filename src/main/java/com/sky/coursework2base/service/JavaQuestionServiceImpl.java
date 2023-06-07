@@ -6,21 +6,18 @@ import com.sky.coursework2base.model.Question;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.sky.coursework2base.model.Question.validateQuestion;
 
 @Service
 public class JavaQuestionServiceImpl implements QuestionService {
-    private final Set<Question> questions;
+    private Set<Question> questions;
 
-    public JavaQuestionServiceImpl(Set<Question> questions) {
-        this.questions = questions;
+    public JavaQuestionServiceImpl() {
+        this.questions = new HashSet<>();
     }
 
     @Override
     public Question add(String question, String answer) {
-        validateQuestion(question,answer);
         Question newQuestion = new Question(question,answer);
         if (questions.add(newQuestion)) {
             return newQuestion;
@@ -39,13 +36,13 @@ public class JavaQuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question remove(Question question) {
-        Question removedQuestion = question;
-        if(!(questions.remove(question))) {
+    public Question remove(String question, String answer) {
+        Question removingQuestion = new Question(question, answer);
+        if(!(questions.remove(removingQuestion))) {
             throw new QuestionNotFoundException();
         }
         else {
-            return removedQuestion;
+            return removingQuestion;
         }
     }
 
@@ -55,14 +52,9 @@ public class JavaQuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question getRandomQuestion() {
-        Question randomQuestion = null;
-        Random random = new Random();
-        int randomInt = random.nextInt(questions.size()+1);
-        for (int i = 1; i != randomInt; i++) {
-            randomQuestion = questions.iterator().next();
-        }
-        return randomQuestion;
+    public Question getRandomQuestion(Random random) {
+        List<Question> questionsList = questions.stream().toList();
+        int randomInt = random.nextInt(questionsList.size());
+        return questionsList.get(randomInt);
     }
-
 }

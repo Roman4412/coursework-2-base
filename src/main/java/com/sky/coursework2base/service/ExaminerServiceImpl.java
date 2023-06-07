@@ -1,25 +1,39 @@
 package com.sky.coursework2base.service;
 
+import com.sky.coursework2base.exception.InvalidAmountException;
 import com.sky.coursework2base.model.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
     private final Random random;
     private final QuestionService questionService;
-    @Autowired
-    public ExaminerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-    @Override
-    public Collection<Question> getQuestions(int amount) {
+    private Set<Question> examQuestions;
 
-        return null;
+    @Autowired
+    public ExaminerServiceImpl(QuestionService JavaQuestionServiceImpl) {
+        this.questionService = JavaQuestionServiceImpl;
+        this.random = new Random(questionService.getAll().size());
+        this.examQuestions = new HashSet<>();
+    }
+
+    @Override
+    public Collection<Question> getQuestions(Integer amount) {
+
+        if (amount == null || amount > questionService.getAll().size()) {
+            throw new InvalidAmountException();
+        }
+        if (examQuestions.size() > 0) {
+            examQuestions.removeAll(questionService.getAll());
+        }
+        for (int i = 0; i < amount; i++) {
+            if (!(examQuestions.add(questionService.getRandomQuestion(random)))) {
+                i--;
+            }
+        }
+        return Collections.unmodifiableCollection(examQuestions);
     }
 }
