@@ -11,7 +11,7 @@ import java.util.*;
 public class ExaminerServiceImpl implements ExaminerService {
     private final Random random;
     private final QuestionService questionService;
-    private Set<Question> examQuestions;
+    private final Set<Question> examQuestions;
 
     @Autowired
     public ExaminerServiceImpl(QuestionService JavaQuestionServiceImpl) {
@@ -23,7 +23,7 @@ public class ExaminerServiceImpl implements ExaminerService {
     @Override
     public Collection<Question> getQuestions(Integer amount) {
 
-        if (amount == null || amount > questionService.getAll().size()) {
+        if (amount == null || amount > questionService.getAll().size() || amount < 0) {
             throw new InvalidAmountException();
         }
         if (examQuestions.size() > 0) {
@@ -35,5 +35,13 @@ public class ExaminerServiceImpl implements ExaminerService {
             }
         }
         return Collections.unmodifiableCollection(examQuestions);
+    }
+
+    public Random getRandom() {
+        return this.random;
+    }
+
+    public Set<Question> getExamQuestions() {
+        return this.examQuestions;
     }
 }

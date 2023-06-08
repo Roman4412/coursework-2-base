@@ -51,7 +51,7 @@ public class Question {
         return Objects.hash(answer, question);
     }
     public static void validateQuestion(String question, String answer) {
-        if (question.isEmpty() || answer.isEmpty()) {
+        if (question == null || answer == null) {
             throw new InvalidQuestionException();
         }
     }

@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
 @Service
 public class JavaQuestionServiceImpl implements QuestionService {
-    private Set<Question> questions;
+    private final Set<Question> questions;
 
     public JavaQuestionServiceImpl() {
         this.questions = new HashSet<>();
@@ -18,7 +17,7 @@ public class JavaQuestionServiceImpl implements QuestionService {
 
     @Override
     public Question add(String question, String answer) {
-        Question newQuestion = new Question(question,answer);
+        Question newQuestion = new Question(question, answer);
         if (questions.add(newQuestion)) {
             return newQuestion;
         } else {
@@ -38,10 +37,9 @@ public class JavaQuestionServiceImpl implements QuestionService {
     @Override
     public Question remove(String question, String answer) {
         Question removingQuestion = new Question(question, answer);
-        if(!(questions.remove(removingQuestion))) {
+        if (!(questions.remove(removingQuestion))) {
             throw new QuestionNotFoundException();
-        }
-        else {
+        } else {
             return removingQuestion;
         }
     }
@@ -53,8 +51,12 @@ public class JavaQuestionServiceImpl implements QuestionService {
 
     @Override
     public Question getRandomQuestion(Random random) {
-        List<Question> questionsList = questions.stream().toList();
+        List<Question> questionsList = getAll().stream().toList();
         int randomInt = random.nextInt(questionsList.size());
         return questionsList.get(randomInt);
+    }
+
+    public Collection<Question> getQuestions() {
+        return Collections.unmodifiableCollection(questions);
     }
 }
